@@ -6,9 +6,12 @@ import './App.css';
 import { List } from './components';
 import { favoritesActions } from './store/favorites';
 
+const Loading = () => <h1>Carregando Ecercicio SEO ...</h1>
+
 function App() {
   const dispatch = useDispatch();
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const favorites = useSelector(({ favorites }) => favorites);
 
@@ -18,12 +21,15 @@ function App() {
     });
     Promise.all(promises)
       .then((data) => {
+        setLoading(false);
         setItems(data);
       });
   }
 
   useEffect(() => {
     // Inicialização
+    setLoading(true);
+
     const localData = localStorage.getItem('react-redux');
     if (localData) {
         const parsed = JSON.parse(localData);
@@ -51,6 +57,10 @@ function App() {
   const handleRemoveItem = useCallback((item) => {
     dispatch(favoritesActions.remove(item));
   }, [dispatch]);
+
+  if(loading){
+    return <Loading />
+  }
 
   return (
     <div>
